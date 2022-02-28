@@ -22,39 +22,39 @@ jobs:
       #  run: sed -i 'ver/releases/${{ steps.get_release.outputs.tag_name }}' manifest.json
       #- name: Zip Modpack
       #  run: zip -r aTechPack.zip *
-      - name: Build Server
-        uses: henkelmax/build-modpack-server-action@v1.0.0
-        with:
-          modpack-path: ./aTechPack.zip
-          output-path: ./aTechPack-server.zip
+      #- name: Build Server
+      #  uses: henkelmax/build-modpack-server-action@v1.0.0
+      #  with:
+      #    modpack-path: ./aTechPack.zip
+      #    output-path: ./aTechPack-server.zip
       #- name: Read Changelog
       #  id: read_changelog
       #  uses: juliangruber/read-file-action@v1
       #  with:
       #    path: ./changelog.md
-      - name: Get Release Type
-        id: get_curseforge_release_type
-        run: |
-          RELEASE_TYPE=$(echo ${{ steps.get_release.outputs.name }} | grep -oE '\[(.*)\]' | sed 's/[][]//g')
-          echo ::set-output name=release_type::$RELEASE_TYPE
+      #- name: Get Release Type
+      #  id: get_curseforge_release_type
+      #  run: |
+      #    RELEASE_TYPE=$(echo ${{ steps.get_release.outputs.name }} | grep -oE '\[(.*)\]' | sed 's/[][]//g')
+      #    echo ::set-output name=release_type::$RELEASE_TYPE
       - name: Copy files for CurseForge upload
         run: |
           mkdir -p curse_upload
           cp ./aTechPack.zip './curse_upload/aTechPack-${{ steps.get_release.outputs.tag_name }}.zip'
-          cp ./aTechPack-server.zip './curse_upload/aTechPack-Server-${{ steps.get_release.outputs.tag_name }}.zip'
+      #    cp ./aTechPack-server.zip './curse_upload/aTechPack-Server-${{ steps.get_release.outputs.tag_name }}.zip'
       - name: Upload to CurseForge
         uses: henkelmax/upload-curseforge-modpack-action@v1.0.0
         with:
           api-token: ${{ secrets.API_TOKEN }}
           project-id: '442747'
           modpack-path: './curse_upload/aTechPack-${{ steps.get_release.outputs.tag_name }}.zip'
-          modpack-server-path: './curse_upload/aTechPack-Server-${{ steps.get_release.outputs.tag_name }}.zip'
-          changelog: ${{ steps.read_changelog.outputs.content }}
-          changelog-format: 'markdown'
+          #modpack-server-path: './curse_upload/aTechPack-Server-${{ steps.get_release.outputs.tag_name }}.zip'
+          #changelog: ${{ steps.read_changelog.outputs.content }}
+          #changelog-format: 'markdown'
           game-version: '1.12.2'
           display-name: 'aTechPack. ${{ steps.get_release.outputs.tag_name }}'
           server-display-name: 'aTechPack. Server ${{ steps.get_release.outputs.tag_name }}'
-          release-type: ${{ steps.get_curseforge_release_type.outputs.release_type }}
+          release-type: 'release'
       - name: Upload Modpack
         uses: actions/upload-release-asset@v1.0.2
         with:
