@@ -18,10 +18,10 @@ jobs:
       - name: Get Release
         id: get_release
         uses: bruceadams/get-release@v1.2.2
-      - name: Write manifest
-        run: sed -i 'ver/releases/${{ steps.get_release.outputs.tag_name }}' manifest.json
-      - name: Zip Modpack
-        run: zip -r aTechPack.zip *
+      #- name: Write manifest
+      #  run: sed -i 'ver/releases/${{ steps.get_release.outputs.tag_name }}' manifest.json
+      #- name: Zip Modpack
+      #  run: zip -r aTechPack.zip *
       - name: Build Server
         uses: henkelmax/build-modpack-server-action@v1.0.0
         with:
