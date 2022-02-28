@@ -19,7 +19,8 @@ jobs:
         id: get_release
         uses: bruceadams/get-release@v1.2.2
       - name: Write manifest
-        run: sed -i 's/%MODPACK_VERSION%/${{ steps.get_release.outputs.tag_name }}/g' manifest.json
+        #run: sed -i 's/%MODPACK_VERSION%/${{ steps.get_release.outputs.tag_name }}/g' manifest.json
+        run: sed -i 'ver/releases/${{ steps.get_release.outputs.tag_name }}/g' manifest.json
       - name: Zip Modpack
         run: zip -r aTechPack.zip *
       - name: Build Server
