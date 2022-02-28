@@ -27,11 +27,11 @@ jobs:
         with:
           modpack-path: ./aTechPack.zip
           output-path: ./aTechPack-server.zip
-      - name: Read Changelog
-        id: read_changelog
-        uses: juliangruber/read-file-action@v1
-        with:
-          path: ./changelog.md
+      #- name: Read Changelog
+      #  id: read_changelog
+      #  uses: juliangruber/read-file-action@v1
+      #  with:
+      #    path: ./changelog.md
       - name: Get Release Type
         id: get_curseforge_release_type
         run: |
