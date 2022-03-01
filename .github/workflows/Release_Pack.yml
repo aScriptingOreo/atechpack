@@ -27,7 +27,7 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Upload Release Asset
+      - name: Upload Modpack Release Asset
         id: upload-release-asset 
         uses: actions/upload-release-asset@v1
         env:
@@ -37,3 +37,38 @@ jobs:
           asset_path: ./aTechPack.zip
           asset_name: aTechPack.zip
           asset_content_type: application/zip
+
+      - name: Build Server
+        uses: henkelmax/build-modpack-server-action@v1.0.0
+        with:
+          modpack-path: ./aTechPack.zip
+          output-path: ./aTechPack-server.zip
+
+      - name: Upload Server Release Asset
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: ./aTechPack-server.zip
+          asset_name: 'aTechPack-Server.zip'
+          asset_content_type: application/zip
+
+      - name: Copy files for CurseForge upload
+        run: |
+          mkdir -p curse_upload
+          cp ./aTechPack.zip './curse_upload/aTechPack-0${{ github.run_number }}.zip'
+          cp ./aTechPack-server.zip './curse_upload/aTechPack-Server-0${{ github.run_number }}.zip'
+
+      - name: Upload to CurseForge
+        uses: henkelmax/upload-curseforge-modpack-action@v1.0.0
+        with:
+          api-token: ${{ secrets.API_TOKEN }}
+          project-id: '442747'
+          modpack-path: './curse_upload/aTechPack-0${{ github.run_number }}.zip'
+          modpack-server-path: './curse_upload/aTechPack-Server-0${{ github.run_number }}.zip'
+          #changelog: ${{ steps.read_changelog.outputs.content }}
+          #changelog-format: 'markdown'
+          game-version: '1.12.2'
+          display-name: 'aTechPack. v.0.${{ github.run_number }}'
+          server-display-name: 'aTechPack. Server v.0.${{ github.run_number }}'
+          release-type: 'release'
+
