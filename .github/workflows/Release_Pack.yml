@@ -2,8 +2,10 @@
 
 name: Package_Modpack
 on:
-  release:
+  push:
     branches: [ main ]
+    tags:
+      - '*'
 
   workflow_dispatch:
 
