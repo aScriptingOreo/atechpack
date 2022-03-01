@@ -10,9 +10,11 @@ on:
 jobs:
 
   package_release:
+    env:
+      commitmsg: ${{ github.event.head_commit.message }}
     runs-on: ubuntu-latest
     steps:
-
+    
       - name: Checkout code
         uses: actions/checkout@v2
 
@@ -28,12 +30,12 @@ jobs:
           prerelease: false
 
       - name: Upload Modpack Release Asset
-        id: upload-release-asset 
+        id: upload-modpack-asset 
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          upload_url: ${{ steps.create_release.outputs.upload_url }} 
           asset_path: ./aTechPack.zip
           asset_name: aTechPack.zip
           asset_content_type: application/zip
@@ -45,18 +47,19 @@ jobs:
           output-path: ./aTechPack-server.zip
 
       - name: Upload Server Release Asset
+        id: upload-server-asset
         uses: actions/upload-release-asset@v1
         with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          upload_url: ${{ steps.create_release.outputs.upload_url }} 
           asset_path: ./aTechPack-server.zip
-          asset_name: 'aTechPack-Server.zip'
+          asset_name: 'aTechPack-server.zip'
           asset_content_type: application/zip
 
       - name: Copy files for CurseForge upload
         run: |
           mkdir -p curse_upload
           cp ./aTechPack.zip './curse_upload/aTechPack-0${{ github.run_number }}.zip'
-          cp ./aTechPack-server.zip './curse_upload/aTechPack-Server-0${{ github.run_number }}.zip'
+          cp ./aTechPack-server.zip './curse_upload/aTechPack-server-0${{ github.run_number }}.zip'
 
       - name: Upload to CurseForge
         uses: henkelmax/upload-curseforge-modpack-action@v1.0.0
@@ -64,8 +67,8 @@ jobs:
           api-token: ${{ secrets.API_TOKEN }}
           project-id: '442747'
           modpack-path: './curse_upload/aTechPack-0${{ github.run_number }}.zip'
-          modpack-server-path: './curse_upload/aTechPack-Server-0${{ github.run_number }}.zip'
-          #changelog: ${{ steps.read_changelog.outputs.content }}
+          modpack-server-path: './curse_upload/aTechPack-server-0${{ github.run_number }}.zip'
+          #changelog: ${{ env.commitmsg }}
           #changelog-format: 'markdown'
           game-version: '1.12.2'
           display-name: 'aTechPack. v.0.${{ github.run_number }}'
